@@ -44,36 +44,128 @@ body.dark #title {
     height: 50px;
     padding: 5px;
     border: none;
+    border-radius: 50%;
     background-color: #dddddd;
+}
+
+.dark-mode-btn:hover {
+    background-color: #cccccc;
+    cursor: pointer;
 }
 
 body.dark .dark-mode-btn {
     background-color: #333333;
 }
 
+body.dark .dark-mode-btn:hover {
+    background-color: #444444;
+}
+
 .dark-mode-btn-svg {
     color: #dddddd;
-    background-color: #dddddd;
+    background-color: rgba(255, 255, 255, 0);
     fill: #555555;
 }
 
 body.dark .dark-mode-btn-svg {
     color: #333333;
-    background-color: #333333;
+    background-color: rgba(255, 255, 255, 0);
     fill: #ffffff;
 }
 
 #editor-container {
     width: 100%;
-    padding: 20px;
+    padding: 30px;
     border-radius: 6px;
     background-color: #cccccc;
 }
 
 body.dark #editor-container {
-    background-color: #444444;
+    background-color: #282828;
 }
 
 #editor {
-    height: 500px;
+    height: 400px;
+}
+
+#editor-controls {
+    margin: 5px 0px;
+    height: 54px;
+    background-color: #fffffe;
+}
+
+body.dark #editor-controls {
+    background-color: #1e1e1e;
+}
+
+#editor-tab-java {
+    left: 20px;
+    color: #dddddd;
+    background-color: #3333aa;
+    border-color: #222299;
+}
+
+#editor-tab-kotlin {
+    left: -10px;
+    color: #333333;
+    background-color: #00aa00;
+    border-color: #009900
+}
+
+.editor-tab {
+    position: relative;
+    float: left;
+    top: 12px;
+    padding-top: 3px;
+    width: 140px;
+    height: 30px;
+    border: 4px solid;
+    border-radius: 22px;
+    text-align: center;
+    line-height: 19px;
+    font: 15px "Helvetica";
+    font-weight: bold;
+}
+
+.editor-tab:hover {
+    cursor: pointer;
+}
+
+.editor-tab.selected {
+    z-index: 1;
+}
+
+.editor-run-btn {
+    position: relative;
+    float: right;
+    top: 7px;
+    right: 20px;
+    padding: 0px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 40px;
+    background-color: #fffffe;
+}
+
+.editor-run-btn:hover {
+    background-color: #eeeeed;
+    cursor: pointer;
+}
+
+body.dark .editor-run-btn {
+    background-color: #1e1e1e;
+}
+
+body.dark .editor-run-btn:hover {
+    background-color: #2f2f2f;
+}
+
+.editor-run-btn-svg {
+    margin: 3px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    fill: #388e3c;
+    background-color: rgba(255, 255, 255, 0);
 }

@@ -1,3 +1,6 @@
 {
-    "port": "4322"
+    "port": "4322",
+    "temp-folder": "F:/cty/programs/html/cs124-temp",
+    "command-sep": "&&",
+    "timeout": 5000
 }

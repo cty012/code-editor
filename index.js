@@ -1,8 +1,10 @@
+const bodyParser = require('body-parser');
+const childProcess = require('child_process');
 const express = require("express");
+const fs = require("fs");
 const { networkInterfaces } = require('os');
 const process = require("process");
 const path = require("path");
-const fs = require("fs");
 
 const SETTINGS = JSON.parse(fs.readFileSync("settings.json", {encoding: "utf8"}));
 
@@ -12,6 +14,7 @@ process.chdir(path.join(__dirname, "public"));
 // Set up the server
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
+app.use(bodyParser.text({ type: "text/plain" }));
 app.listen(SETTINGS.port);
 
 // obtain IPv4
@@ -58,7 +61,42 @@ class AppManager {
 
 // var appManager = new AppManager(path.join(__dirname, "/public/resources/app"));
 
+function execute(command) {
+    try {
+        let stdout = childProcess.execSync(command, timeout=SETTINGS["timeout"]).toString();
+        let message = stdout.length == 0 ? "[Completed without output]" : stdout;
+        return {"status": 0, "msg": message};
+    } catch (e) {
+        let message = e.stdout.toString() + e.stderr.toString()
+        if (e.signal == "SIGTERM") message += "[Program timed out]";
+        return {"status": e.status, "msg": message};
+    }
+}
+
 // Deal with GET request
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "/public/views/index.html"));
+});
+
+app.post("/submission/java", (req, res) => {
+    // calculate paths
+    folderName = `${(new Date()).getTime()}`;
+    folderPath = path.join(SETTINGS["temp-folder"], folderName);
+    filePath = path.join(folderPath, "Main.java");
+
+    // setup environment
+    fs.mkdirSync(folderPath);
+    fs.writeFileSync(filePath, req.body);
+
+    // execute command
+    result1 = execute(`javac ${filePath} -d ${folderPath}`);
+    if (result1.status != 0) {
+        res.send("Line " + result1.msg.substring(filePath.length + 1));
+    } else {
+        result2 = execute(`java -Djava.security.manager -cp ${folderPath} Main`);
+        res.send(result2.msg);
+    }
+
+    // remove temp folder
+    fs.rmdirSync(folderPath, { recursive: true });
 });
