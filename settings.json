@@ -4,5 +4,6 @@
     "javac": "javac",
     "kotlinc": "kotlinc",
     "java": "java",
-    "timeout": 5000
+    "timeout": 5000,
+    "maxBuffer": 8192
 }

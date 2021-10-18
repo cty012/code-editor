@@ -35,9 +35,9 @@ for (const name of Object.keys(nets)) {
 console.log(results);
 
 // Some useful functions
-function execute(command, timeout=null) {
+function execute(command, timeout=undefined, maxBuffer=1024*1024) {
     try {
-        let stdout = childProcess.execSync(command, timeout=timeout).toString();
+        let stdout = childProcess.execSync(command, { stdio: "pipe", timeout: timeout, maxBuffer: maxBuffer }).toString();
         let message = stdout.length == 0 ? "[Completed without output]" : stdout;
         return {"status": 0, "msg": message};
     } catch (e) {
@@ -87,7 +87,9 @@ app.post("/submission/:language", async (req, res) => {
     } else {
         result2 = execute(
             `${SETTINGS["java"]} -Djava.security.manager -cp ${folderPath} ${lang == "java" ? "Main" : "MainKt"}`,
-            timeout=SETTINGS["timeout"]);
+            timeout=SETTINGS["timeout"],
+            maxBuffer=SETTINGS["maxBuffer"]
+        );
         res.send(result2.msg);
     }
 
