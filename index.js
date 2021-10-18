@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.text({ type: "text/plain" }));
 app.listen(SETTINGS.port);
 
-// obtain IPv4
+// Obtain IPv4
 const nets = networkInterfaces();
 const results = {}
 
@@ -34,36 +34,10 @@ for (const name of Object.keys(nets)) {
 }
 console.log(results);
 
-// file system
-class AppManager {
-    constructor(path) {
-        this.root = path;
-    }
-    readFile(relPath) {
-        return fs.readFileSync(path.join(this.root, relPath), {encoding: "utf8"});
-    }
-    getFiles(relPath) {
-        return fs.readdirSync(path.join(this.root, relPath)).filter(file => file != ".DS_Store");
-    }
-    getAppList() {
-        return this.getFiles("/");
-    }
-    getInfo(id) {
-        return JSON.parse(this.readFile(path.join(id, "/info.json")));
-    }
-    getDescription(id) {
-        return this.readFile(path.join(id, "/description.html"));
-    }
-    getNumImgs(id) {
-        return this.getFiles(path.join(id, "/carousel")).filter(file => file.toLowerCase().endsWith(".png")).length;
-    }
-}
-
-// var appManager = new AppManager(path.join(__dirname, "/public/resources/app"));
-
-function execute(command) {
+// Some useful functions
+function execute(command, timeout=null) {
     try {
-        let stdout = childProcess.execSync(command, timeout=SETTINGS["timeout"]).toString();
+        let stdout = childProcess.execSync(command, timeout=timeout).toString();
         let message = stdout.length == 0 ? "[Completed without output]" : stdout;
         return {"status": 0, "msg": message};
     } catch (e) {
@@ -73,30 +47,50 @@ function execute(command) {
     }
 }
 
+function replaceAll(str, target, replacement) {
+    let oldStr = str;
+    let newStr = str;
+    do {
+        oldStr = newStr;
+        newStr = oldStr.replace(target, replacement);
+    } while (oldStr != newStr);
+    return oldStr;
+}
+
 // Deal with GET request
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "/public/views/index.html"));
 });
 
-app.post("/submission/java", (req, res) => {
-    // calculate paths
+app.post("/submission/:language", async (req, res) => {
+    // Check language
+    let lang = req.params.language;
+    if (["java", "kotlin"].includes()) {
+        res.send(`ERROR: ${lang} is not a valid language`)
+        return;
+    }
+
+    // Calculate paths
     folderName = `${(new Date()).getTime()}`;
     folderPath = path.join(SETTINGS["temp-folder"], folderName);
-    filePath = path.join(folderPath, "Main.java");
+    fileName = (lang == "java" ? "Main.java" : "Main.kt")
+    filePath = path.join(folderPath, fileName);
 
-    // setup environment
+    // Setup environment
     fs.mkdirSync(folderPath);
     fs.writeFileSync(filePath, req.body);
 
-    // execute command
-    result1 = execute(`javac ${filePath} -d ${folderPath}`);
+    // Execute command
+    result1 = execute(`${SETTINGS[lang + "c"]} ${filePath} -d ${folderPath}`);
     if (result1.status != 0) {
-        res.send("Line " + result1.msg.substring(filePath.length + 1));
+        res.send(replaceAll(result1.msg, filePath, fileName));
     } else {
-        result2 = execute(`java -Djava.security.manager -cp ${folderPath} Main`);
+        result2 = execute(
+            `${SETTINGS["java"]} -Djava.security.manager -cp ${folderPath} ${lang == "java" ? "Main" : "MainKt"}`,
+            timeout=SETTINGS["timeout"]);
         res.send(result2.msg);
     }
 
-    // remove temp folder
+    // Remove temp folder
     fs.rmdirSync(folderPath, { recursive: true });
 });
