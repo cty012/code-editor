@@ -4,6 +4,8 @@
     "javac": "javac",
     "kotlinc": "kotlinc",
     "java": "java",
-    "timeout": 5000,
+    "security-manager-path": "F:/cty/programs/html/cs124",
+    "security-manager": "ThreadSecurityManager",
+    "timeout": 4000,
     "maxBuffer": 8192
 }

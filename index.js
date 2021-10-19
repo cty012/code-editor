@@ -32,19 +32,26 @@ for (const name of Object.keys(nets)) {
         }
     }
 }
-console.log(results);
+console.log("IPv4: " + results);
+console.log("Node process pid: " + process.pid);
 
 // Some useful functions
-function execute(command, timeout=undefined, maxBuffer=1024*1024) {
-    try {
-        let stdout = childProcess.execSync(command, { stdio: "pipe", timeout: timeout, maxBuffer: maxBuffer }).toString();
-        let message = stdout.length == 0 ? "[Completed without output]" : stdout;
-        return {"status": 0, "msg": message};
-    } catch (e) {
-        let message = e.stdout.toString() + e.stderr.toString()
-        if (e.signal == "SIGTERM") message += "[Program timed out]";
-        return {"status": e.status, "msg": message};
+function executeSync(command, args, timeout=undefined, maxBuffer=1024*1024) {
+    let proc = childProcess.spawnSync(command, args, { stdio: "pipe", timeout: timeout, maxBuffer: maxBuffer });
+    let message = "";
+    if (proc.signal == "SIGTERM") {
+        // timeout
+        message = proc.stdout.toString() + proc.stderr.toString();
+        message += "[Program timed out]";
+    } else if (proc.status == 0) {
+        // success
+        message = proc.stdout.toString()
+        if (message.length == 0) message = "[Completed without output]";
+    } else {
+        // error
+        message = proc.stdout.toString() + proc.stderr.toString();
     }
+    return {"status": proc.status, "msg": message};
 }
 
 function replaceAll(str, target, replacement) {
@@ -81,12 +88,19 @@ app.post("/submission/:language", async (req, res) => {
     fs.writeFileSync(filePath, req.body);
 
     // Execute command
-    result1 = execute(`${SETTINGS[lang + "c"]} ${filePath} -d ${folderPath}`);
+    let result1 = executeSync(SETTINGS[lang + "c"], [filePath, "-d", folderPath]);
     if (result1.status != 0) {
         res.send(replaceAll(result1.msg, filePath, fileName));
     } else {
-        result2 = execute(
-            `${SETTINGS["java"]} -Djava.security.manager -cp ${folderPath} ${lang == "java" ? "Main" : "MainKt"}`,
+        let result2 = executeSync(
+            SETTINGS["java"],
+            [
+                "-cp",
+                `${SETTINGS["security-manager-path"]};${folderPath}`,
+                `-Djava.security.manager=${SETTINGS["security-manager"]}`,
+                "-Djava.security.policy==/dev/null",
+                lang == "java" ? "Main" : "MainKt"
+            ],
             timeout=SETTINGS["timeout"],
             maxBuffer=SETTINGS["maxBuffer"]
         );

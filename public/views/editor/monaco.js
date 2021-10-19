@@ -17,7 +17,7 @@ window.onload = () => {
             top: 20,
             bottom: 20
         },
-        fontFamily: "Consolas",
+        fontFamily: "monospace",
         fontSize: 18,
         scrollBeyondLastLine: false,
         minimap: {

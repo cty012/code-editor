@@ -39,10 +39,13 @@ function selectTab(language) {
 }
 
 function submit(lang=currentLanguage) {
+    // hide last result
+    document.getElementById("editor-output").classList.add("hidden");
     // send request
     xhttp.onreadystatechange = function() {
         if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
             document.getElementById("editor-output").innerHTML = xhttp.responseText;
+            document.getElementById("editor-output").classList.remove("hidden");
         }
     };
     xhttp.open("POST", `/submission/${lang}`, true);

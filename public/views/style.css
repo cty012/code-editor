@@ -24,7 +24,7 @@ body.dark {
     height: 50px;
     text-align: center;
     line-height: 50px;
-    font: 35px helvetica;
+    font: 35px MontserratB;
     color: #333333
 }
 
@@ -116,14 +116,14 @@ body.dark #editor-controls {
     position: relative;
     float: left;
     top: 6px;
-    padding-top: 3px;
+    padding: 0px;
     width: 140px;
     height: 30px;
     border: 4px solid;
     border-radius: 22px;
     text-align: center;
-    line-height: 19px;
-    font: 15px "Helvetica";
+    line-height: 22px;
+    font: 17px "MontserratB";
     font-weight: bold;
 }
 
@@ -168,4 +168,41 @@ body.dark .editor-run-btn:hover {
     border: none;
     fill: #388e3c;
     background-color: rgba(255, 255, 255, 0);
+}
+
+#editor-output {
+    margin: 0px;
+    padding: 15px 30px;
+    max-height: 400px;
+    background-color: #fffffe;
+    font: 18px monospace;
+    color: #000000;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-y: scroll;
+}
+
+body.dark #editor-output {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+#editor-output::-webkit-scrollbar {
+    background-color: #eeeeee;
+}
+
+#editor-output::-webkit-scrollbar-thumb {
+    background-color: lightgray;
+}
+
+body.dark #editor-output::-webkit-scrollbar {
+    background-color: #333333;
+}
+
+body.dark #editor-output::-webkit-scrollbar-thumb {
+    background: gray;
+}
+
+#editor-output.hidden {
+    display: none;
 }
