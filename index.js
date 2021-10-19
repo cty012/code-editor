@@ -32,14 +32,15 @@ for (const name of Object.keys(nets)) {
         }
     }
 }
-console.log("IPv4: " + results);
+console.log(results);
 console.log("Node process pid: " + process.pid);
 
 // Some useful functions
 function executeSync(command, args, timeout=undefined, maxBuffer=1024*1024) {
     let proc = childProcess.spawnSync(command, args, { stdio: "pipe", timeout: timeout, maxBuffer: maxBuffer });
     let message = "";
-    if (proc.signal == "SIGTERM") {
+    console.log(`${command}: signal=${proc.signal}, status=${proc.status}`);
+    if (proc.signal == "SIGTERM" || proc.status == 143) {
         // timeout
         message = proc.stdout.toString() + proc.stderr.toString();
         message += "[Program timed out]";
@@ -96,7 +97,7 @@ app.post("/submission/:language", async (req, res) => {
             SETTINGS["java"],
             [
                 "-cp",
-                `${SETTINGS["security-manager-path"]};${folderPath}`,
+                SETTINGS["security-manager-path"] + SETTINGS["class-path-sep"] + folderPath,
                 `-Djava.security.manager=${SETTINGS["security-manager"]}`,
                 "-Djava.security.policy==/dev/null",
                 lang == "java" ? "Main" : "MainKt"

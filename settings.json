@@ -1,11 +1,12 @@
 {
-    "port": "4322",
-    "temp-folder": "F:/cty/programs/html/cs124-temp",
+    "port": "1234",
+    "temp-folder": "F:/cty/programs/html/code-editor-temp",
     "javac": "javac",
     "kotlinc": "kotlinc",
     "java": "java",
-    "security-manager-path": "F:/cty/programs/html/cs124",
+    "security-manager-path": "F:/cty/programs/html/code-editor",
     "security-manager": "ThreadSecurityManager",
+    "class-path-sep": ";",
     "timeout": 4000,
     "maxBuffer": 8192
 }

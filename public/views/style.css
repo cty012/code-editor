@@ -176,7 +176,7 @@ body.dark .editor-run-btn:hover {
     max-height: 400px;
     background-color: #fffffe;
     font: 18px monospace;
-    color: #000000;
+    color: #333333;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-y: scroll;
@@ -184,7 +184,7 @@ body.dark .editor-run-btn:hover {
 
 body.dark #editor-output {
     background-color: #1e1e1e;
-    color: #ffffff;
+    color: #dddddd;
 }
 
 #editor-output::-webkit-scrollbar {
