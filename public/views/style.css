@@ -195,7 +195,7 @@ body.dark .editor-run-btn:hover {
     padding: 15px 30px;
     max-height: 400px;
     background-color: #fffffe;
-    font: 18px monospace;
+    font: 18px MyMonaco;
     color: #333333;
     white-space: pre-wrap;
     word-wrap: break-word;
